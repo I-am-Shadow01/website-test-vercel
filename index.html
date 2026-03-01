@@ -3,31 +3,35 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>หยุดเผือก!</title>
+    <title>My Professional Portfolio</title>
     <style>
-        :root { --bg: #fff; --text: #000; --border: #ccc; }
-        [data-theme='dark'] { --bg: #000; --text: #0ff; --border: #333; }
+        :root { --bg: #ffffff; --text: #171717; --accent: #0070f3; --card: #fafafa; }
+        [data-theme='dark'] { --bg: #000000; --text: #ededed; --accent: #3291ff; --card: #111111; }
+        
         body { 
             background: var(--bg); color: var(--text); 
-            font-family: 'Courier New', monospace; 
-            margin: 0; display: flex; justify-content: center; align-items: center; height: 100vh; 
-            transition: 0.2s;
+            font-family: -apple-system, system-ui, sans-serif; 
+            margin: 0; transition: 0.3s;
         }
-        /* Dropdown Style */
-        .nav { position: fixed; top: 20px; right: 20px; }
+        .nav { position: fixed; top: 20px; right: 20px; display: flex; gap: 10px; }
         select { 
-            padding: 8px; border-radius: 5px; background: var(--text); color: var(--bg); 
-            border: 1px solid var(--border); cursor: pointer; font-family: inherit;
+            padding: 8px 12px; border-radius: 8px; border: 1px solid var(--accent);
+            background: var(--bg); color: var(--text); cursor: pointer;
         }
-        #app { text-align: center; max-width: 500px; padding: 20px; }
-        .glitch { font-size: 2rem; font-weight: bold; text-transform: uppercase; }
+        #app { 
+            max-width: 800px; margin: 0 auto; padding: 100px 20px;
+            display: flex; flex-direction: column; gap: 20px;
+        }
+        .hero h1 { font-size: 3.5rem; letter-spacing: -2px; margin: 0; }
+        .hero p { font-size: 1.25rem; opacity: 0.6; }
+        .badge { display: inline-block; padding: 4px 12px; background: var(--accent); color: white; border-radius: 20px; font-size: 0.8rem; }
     </style>
 </head>
 <body>
 
     <div id="app">
-        <h1 style="color: red;">[ ERROR: 403 Forbidden ]</h1>
-        <p>พยายามจะ curl ดู source code หรอ? ไปนอนไป๊!</p>
+        <h1 style="color: red;">[ ACCESS DENIED ]</h1>
+        <p>Sorry, this content requires JavaScript to render. Or maybe you're just a bot?</p>
     </div>
 
     <div class="nav">
@@ -41,45 +45,37 @@
     <script defer src="/_vercel/insights/script.js"></script>
 
     <script>
-        // --- ส่วน JavaScript หลัก ---
-        
         const app = document.getElementById('app');
         const themeSelect = document.getElementById('themeSelect');
 
-        // 1. ระบบจัดการภาษา (ตรวจสอบจากเบราว์เซอร์)
-        const userLang = navigator.language || navigator.userLanguage;
-        const isThai = userLang.includes('th');
-
-        // 2. เนื้อหาที่จะ Render (ด่าคน curl เป็นหลัก)
-        const content = {
-            th: {
-                title: "ยินดีด้วย คุณไม่ได้ curl",
-                desc: "นี่คือหน้า Portfolio ที่เขียนด้วย JS ล้วนๆ เพราะผมขี้เกียจเขียน HTML โง่ๆ ให้คนอื่นมาก๊อป",
-                joke: "สถานะ: กำลังพัฒนา (หรือกำลังอู้อยู่ก็ไม่รู้)"
-            },
-            en: {
-                title: "Nice try, Curler!",
-                desc: "This is a JS-rendered portfolio. Your curl command sees nothing but garbage.",
-                joke: "Status: Coding while sleeping."
-            }
+        // ข้อมูล Portfolio (ใส่ข้อมูลจริงของคุณตรงนี้ได้เลย)
+        const profileData = {
+            name: "YOUR NAME",
+            role: "Full Stack Developer (Learning)",
+            bio: "ชอบเขียนโค้ดและแกล้งคนใช้ curl เป็นชีวิตจิตใจ",
+            projects: ["Vercel Deployment", "GitHub Actions", "Dynamic Theme System"]
         };
 
-        const lang = isThai ? content.th : content.en;
-
-        // 3. ฟังก์ชัน Render หน้าเว็บ
         function renderApp() {
             app.innerHTML = `
-                <div class="glitch">${lang.title}</div>
-                <p>${lang.desc}</p>
-                <hr style="border: 0; border-top: 1px solid var(--border)">
-                <p style="font-style: italic; opacity: 0.6;">${lang.joke}</p>
+                <section class="hero">
+                    <span class="badge">Available for Work</span>
+                    <h1>I'm ${profileData.name}</h1>
+                    <p>${profileData.role}</p>
+                    <p style="max-width: 500px;">${profileData.bio}</p>
+                </section>
+                <section>
+                    <h3>My Skills</h3>
+                    <ul style="list-style: none; padding: 0; display: flex; gap: 10px; flex-wrap: wrap;">
+                        ${profileData.projects.map(p => `<li style="padding: 10px 20px; background: var(--card); border: 1px solid var(--accent); border-radius: 10px;">${p}</li>`).join('')}
+                    </ul>
+                </section>
             `;
         }
 
-        // 4. ระบบจัดการธีม (System / Dark / Light)
+        // ระบบจัดการธีม
         function applyTheme(mode) {
             const systemDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-            
             if (mode === 'dark' || (mode === 'system' && systemDark)) {
                 document.documentElement.setAttribute('data-theme', 'dark');
             } else {
@@ -88,20 +84,16 @@
             localStorage.setItem('theme-pref', mode);
         }
 
-        function changeTheme(val) {
-            applyTheme(val);
-        }
+        function changeTheme(val) { applyTheme(val); }
 
-        // 5. Initial Load
         window.onload = () => {
             const savedTheme = localStorage.getItem('theme-pref') || 'system';
             themeSelect.value = savedTheme;
             applyTheme(savedTheme);
-            renderApp(); // พ่นเนื้อหาจริงทับคำด่าใน HTML
+            renderApp(); // พ่นหน้าเว็บสวยๆ ทับ
         };
 
-        // ฟังการเปลี่ยนแปลงของ System Theme แบบ Real-time
-        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
+        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
             if (themeSelect.value === 'system') applyTheme('system');
         });
     </script>
