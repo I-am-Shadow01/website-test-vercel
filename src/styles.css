@@ -555,7 +555,7 @@ nav.scrolled{
 }
 /* play enter animation once drawer is open */
 .mob-overlay.open .mob-item{
-  animation: mobItemIn .32s var(--spring) calc(var(--i)*.06s + .12s) both;
+  animation: mobItemIn .32s cubic-bezier(.34,1.56,.64,1) calc(var(--i)*.06s + .12s) both;
 }
 /* no-anim: skip animation, show immediately */
 .no-anim .mob-overlay.open .mob-item{
