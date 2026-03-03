@@ -482,46 +482,36 @@ nav.scrolled{
 }
 [data-theme=light] .mob-overlay.open{background:rgba(0,0,0,.14)}
 
-/* ╔═══════════════════════════════════════════════════════════╗
-   ║  Floating glass card                                      ║
-   ╚═══════════════════════════════════════════════════════════╝ */
 .mob-glass{
   position:absolute;top:14px;right:14px;
   width:min(300px,88vw);
+  transform:translateY(-10px) scale(.97);
+  opacity:0;
+  transition:transform .32s var(--spring),opacity .22s var(--ease);
+  border-radius:20px;
+  box-shadow:0 24px 64px rgba(0,0,0,.65),0 0 56px var(--acg);
+}
+[data-theme=light] .mob-glass{
+  box-shadow:0 16px 48px rgba(0,0,0,.14),0 0 48px var(--acg);
+}
+.mob-overlay.open .mob-glass{ transform:translateY(0) scale(1); opacity:1; }
+
+.mob-glass-inner{
   display:flex;flex-direction:column;
+  width:100%;
   background:rgba(10,10,22,.86);
   backdrop-filter:var(--blurXL);-webkit-backdrop-filter:var(--blurXL);
   border:1px solid rgba(255,255,255,.11);
   border-radius:20px;
-  /*
-   * KEY FIX: use clip-path instead of overflow:hidden
-   * overflow:hidden + transform on same element causes browsers
-   * to miscalculate the clipping height, truncating the card.
-   * clip-path clips visually without affecting layout/height.
-   */
-  clip-path:inset(0 round 20px);
-  box-shadow:
-    0 24px 64px rgba(0,0,0,.65),
-    0 0 56px var(--acg),
-    inset 0 1px 0 rgba(255,255,255,.10);
-  /* transform + opacity animate the entrance */
-  transform:translateY(-10px) scale(.97);
-  opacity:0;
-  transition:transform .32s var(--spring),opacity .22s var(--ease);
+  overflow:hidden;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.10);
 }
-[data-theme=light] .mob-glass{
+[data-theme=light] .mob-glass-inner{
   background:rgba(246,246,255,.94);
   border-color:rgba(0,0,0,.10);
-  box-shadow:
-    0 16px 48px rgba(0,0,0,.14),
-    0 0 48px var(--acg),
-    inset 0 1px 0 rgba(255,255,255,.95);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.95);
 }
-.mob-overlay.open .mob-glass{ transform:translateY(0) scale(1); opacity:1; }
 
-/* ╔═══════════════════════════════════════════════════════════╗
-   ║  ZONE 1 — Name + Close menu                              ║
-   ╚═══════════════════════════════════════════════════════════╝ */
 .mob-header{
   display:flex;align-items:center;justify-content:space-between;
   padding:13px 13px 12px;
@@ -557,18 +547,10 @@ nav.scrolled{
 [data-theme=light] .mob-close{ background:rgba(255,255,255,.75);border-color:rgba(0,0,0,.10); }
 [data-theme=light] .mob-close:hover{ background:rgba(255,255,255,.95); }
 
-/* ╔═══════════════════════════════════════════════════════════╗
-   ║  ZONE 2 — Nav links                                      ║
-   ╚═══════════════════════════════════════════════════════════╝ */
 .mob-nav{
   padding:7px 7px;
   display:flex;flex-direction:column;gap:2px;
   flex-shrink:0;
-  /*
-   * Must be opaque (same as glass bg) — not transparent.
-   * Transparent nav lets the footer below paint visually on top
-   * before the opacity transition completes.
-   */
   background:rgba(10,10,22,.86);
   border-bottom:1px solid rgba(255,255,255,.07);
   position:relative;
@@ -624,9 +606,6 @@ nav.scrolled{
   transform:rotate(-45deg);
 }
 
-/* ╔═══════════════════════════════════════════════════════════╗
-   ║  ZONE 3 — Location + year                               ║
-   ╚═══════════════════════════════════════════════════════════╝ */
 .mob-footer{
   padding:10px 16px 12px;
   display:flex;justify-content:center;align-items:center;gap:6px;

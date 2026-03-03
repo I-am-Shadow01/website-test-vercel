@@ -109,7 +109,7 @@ function buildOverlay(items, t, onClose) {
   ov.setAttribute('aria-modal','true');
   ov.setAttribute('aria-label','Navigation menu');
   ov.innerHTML = `
-    <div class="mob-glass">
+    <div class="mob-glass"><div class="mob-glass-inner">
 
       <!-- Header -->
       <div class="mob-header">
@@ -141,7 +141,7 @@ function buildOverlay(items, t, onClose) {
       <div class="mob-footer">
         <span>${CONFIG.meta.location}&nbsp;·&nbsp;${new Date().getFullYear()}</span>
       </div>
-    </div>
+    </div></div>
   `;
   ov.__close = onClose;
   // Close on backdrop click (outside the drawer panel)
