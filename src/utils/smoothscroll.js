@@ -19,7 +19,7 @@ export function initSmoothScroll() {
     const root = document.getElementById('__root__');
     const scroller = root || window;
     const scrollTop = root ? root.scrollTop : window.scrollY;
-    const top = target.getBoundingClientRect().top + scrollTop - 64;
+    const top = target.getBoundingClientRect().top + scrollTop - 80;
     scroller.scrollTo({ top, behavior: 'smooth' });
   };
 }
