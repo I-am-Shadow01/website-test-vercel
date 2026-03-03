@@ -480,12 +480,15 @@ nav.scrolled{
 
 /* Glass drawer — slides in from right */
 .mob-glass{
-  position:absolute;top:0;right:0;bottom:0;
+  position:absolute;top:0;right:0;
   width:min(320px,86vw);
+  height:auto;
   display:flex;flex-direction:column;
   background:rgba(8,8,20,.90);
   backdrop-filter:var(--blurXL);-webkit-backdrop-filter:var(--blurXL);
   border-left:1px solid var(--b1);
+  border-bottom:1px solid var(--b1);
+  border-bottom-left-radius:var(--r);
   box-shadow:-24px 0 80px rgba(0,0,0,.6),0 0 60px var(--acg);
   transform:translateX(100%);
   transition:transform .42s var(--spring);
@@ -493,6 +496,7 @@ nav.scrolled{
 [data-theme=light] .mob-glass{
   background:rgba(250,250,255,.94);
   border-left-color:rgba(0,0,0,.08);
+  border-bottom-color:rgba(0,0,0,.08);
   box-shadow:-16px 0 48px rgba(0,0,0,.12),0 0 48px var(--acg);
 }
 .mob-overlay.open .mob-glass{transform:translateX(0)}
@@ -537,7 +541,7 @@ nav.scrolled{
 
 /* Nav items */
 .mob-nav{
-  flex:1;padding:10px 10px;overflow-y:auto;
+  flex:0 0 auto;padding:10px 10px;
   display:flex;flex-direction:column;gap:2px;
 }
 /* keyframe for stagger-in — avoids paint-timing issue with transition */
@@ -590,7 +594,7 @@ nav.scrolled{
 
 /* Footer */
 .mob-footer{
-  padding:14px 18px 28px;
+  padding:14px 18px 20px;
   border-top:1px solid var(--b0);
   display:flex;justify-content:space-between;align-items:center;
   font-size:.66rem;color:var(--tx3);letter-spacing:.06em;

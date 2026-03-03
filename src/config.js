@@ -18,7 +18,7 @@ export const CONFIG = {
       'Open Source Contributor',
     ],
     greeting: 'Hello, World.',
-    location: 'trat, Thailand 🇹🇭',
+    location: 'trgggggat, Thailand 🇹🇭',
     available: true,         // true = แสดง "Available for work"
   },
 
