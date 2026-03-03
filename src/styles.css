@@ -541,25 +541,31 @@ nav.scrolled{
   display:flex;flex-direction:column;gap:2px;
 }
 /* keyframe for stagger-in — avoids paint-timing issue with transition */
-@keyframes mobItemIn {
-  from { opacity:0; transform:translateX(16px); }
-  to   { opacity:1; transform:translateX(0); }
-}
+
 .mob-item{
   display:flex;align-items:center;gap:12px;width:100%;
   padding:13px 14px;border-radius:var(--r);
   color:var(--tx2);background:transparent;
   /* invisible until drawer opens */
   opacity:0;
-  transition: background var(--dur), color var(--dur);
+  transform:translateX(16px);
+  transition: opacity .28s cubic-bezier(.34,1.56,.64,1),
+              transform .32s cubic-bezier(.34,1.56,.64,1),
+              background var(--dur), color var(--dur);
 }
-/* play enter animation once drawer is open */
+/* show all items when overlay opens */
 .mob-overlay.open .mob-item{
-  animation: mobItemIn .32s cubic-bezier(.34,1.56,.64,1) calc(var(--i)*.06s + .12s) both;
+  opacity:1;
+  transform:translateX(0);
 }
-/* no-anim: skip animation, show immediately */
+/* stagger delays via nth-child — avoids calc(var()) browser bugs */
+.mob-overlay.open .mob-item:nth-child(1){ transition-delay:.10s }
+.mob-overlay.open .mob-item:nth-child(2){ transition-delay:.16s }
+.mob-overlay.open .mob-item:nth-child(3){ transition-delay:.22s }
+.mob-overlay.open .mob-item:nth-child(4){ transition-delay:.28s }
+/* no-anim: skip transition, show immediately */
 .no-anim .mob-overlay.open .mob-item{
-  animation: none;
+  transition:none;
   opacity:1;transform:translateX(0);
 }
 .mob-item:hover{background:var(--ac0);color:var(--tx)}
