@@ -97,15 +97,28 @@ function createNav(t) {
   return nav;
 }
 
-// ── Liquid glass mobile overlay ──────────────────────────────
+// ── Mobile side-drawer overlay ───────────────────────────────
 function buildOverlay(items, t, onClose) {
   const ov = document.createElement('div');
   ov.className = 'mob-overlay';
   ov.setAttribute('role','dialog');
   ov.setAttribute('aria-modal','true');
+  ov.setAttribute('aria-label','Navigation menu');
   ov.innerHTML = `
     <div class="mob-glass">
       <div class="mob-sheen"></div>
+
+      <!-- Header -->
+      <div class="mob-header">
+        <span class="mob-header-logo">${CONFIG.meta.firstName}<span>.</span></span>
+        <button class="mob-close" aria-label="Close menu">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+          </svg>
+        </button>
+      </div>
+
+      <!-- Nav links -->
       <nav class="mob-nav">
         ${items.map((item,i)=>`
           <button class="mob-item" style="--i:${i}"
@@ -113,12 +126,14 @@ function buildOverlay(items, t, onClose) {
             <span class="mob-num">0${i+1}</span>
             <span class="mob-label">${t('nav_'+item.id)}</span>
             <span class="mob-arrow">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
                 <path d="M7 17L17 7M17 7H7M17 7v10"/>
               </svg>
             </span>
           </button>`).join('')}
       </nav>
+
+      <!-- Footer -->
       <div class="mob-footer">
         <span>${CONFIG.meta.location}</span>
         <span>${new Date().getFullYear()}</span>
@@ -126,7 +141,10 @@ function buildOverlay(items, t, onClose) {
     </div>
   `;
   ov.__close = onClose;
-  ov.addEventListener('click', e=>{ if(e.target===ov) onClose(); });
+  // Close on backdrop click (outside the drawer panel)
+  ov.addEventListener('click', e => { if (e.target === ov) onClose(); });
+  // Wire close button
+  ov.querySelector('.mob-close').addEventListener('click', onClose);
   return ov;
 }
 
