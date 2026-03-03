@@ -482,13 +482,13 @@ nav.scrolled{
 .mob-glass{
   position:absolute;top:0;right:0;
   width:min(320px,86vw);
-  height:auto;
   display:flex;flex-direction:column;
+  overflow:hidden;
   background:rgba(8,8,20,.90);
   backdrop-filter:var(--blurXL);-webkit-backdrop-filter:var(--blurXL);
   border-left:1px solid var(--b1);
   border-bottom:1px solid var(--b1);
-  border-bottom-left-radius:var(--r);
+  border-bottom-left-radius:14px;
   box-shadow:-24px 0 80px rgba(0,0,0,.6),0 0 60px var(--acg);
   transform:translateX(100%);
   transition:transform .42s var(--spring);
@@ -511,10 +511,10 @@ nav.scrolled{
 }
 /* Accent glow blob */
 .mob-glass::after{
-  content:'';position:absolute;top:-60px;right:-60px;
-  width:200px;height:200px;border-radius:50%;
+  content:'';position:absolute;top:0;right:-40px;
+  width:160px;height:160px;border-radius:50%;
   background:radial-gradient(circle,var(--ac0),transparent 65%);
-  pointer-events:none;
+  pointer-events:none;z-index:0;
 }
 
 /* Header row with close button */
@@ -522,7 +522,7 @@ nav.scrolled{
   display:flex;align-items:center;justify-content:space-between;
   padding:18px 18px 14px;
   border-bottom:1px solid var(--b0);
-  flex-shrink:0;
+  flex-shrink:0;position:relative;z-index:1;
 }
 .mob-header-logo{
   font-size:.92rem;font-weight:700;letter-spacing:-.02em;color:var(--tx);
@@ -543,6 +543,7 @@ nav.scrolled{
 .mob-nav{
   flex:0 0 auto;padding:10px 10px;
   display:flex;flex-direction:column;gap:2px;
+  position:relative;z-index:1;
 }
 /* keyframe for stagger-in — avoids paint-timing issue with transition */
 @keyframes mobItemIn {
@@ -599,6 +600,7 @@ nav.scrolled{
   display:flex;justify-content:space-between;align-items:center;
   font-size:.66rem;color:var(--tx3);letter-spacing:.06em;
   flex-shrink:0;
+  position:relative;z-index:1;
   opacity:0;
   transition:opacity .28s var(--ease) .28s;
 }
