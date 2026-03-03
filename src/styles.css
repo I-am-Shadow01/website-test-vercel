@@ -230,7 +230,7 @@ nav.scrolled{
 
 /* ── Mobile overlay ──────────────────────────────────────────── */
 .mob-overlay{
-  position:fixed;inset:0;z-index:1020;
+  position:fixed;inset:0;z-index:998;
   background:transparent;
   backdrop-filter:blur(0px);-webkit-backdrop-filter:blur(0px);
   pointer-events:none;
@@ -541,14 +541,26 @@ nav.scrolled{
   display:flex;flex-direction:column;gap:2px;
 }
 /* keyframe for stagger-in — avoids paint-timing issue with transition */
-
+@keyframes mobItemIn {
+  from { opacity:0; transform:translateX(16px); }
+  to   { opacity:1; transform:translateX(0); }
+}
 .mob-item{
   display:flex;align-items:center;gap:12px;width:100%;
   padding:13px 14px;border-radius:var(--r);
   color:var(--tx2);background:transparent;
-  opacity:1 !important;
-  transform:none !important;
+  /* invisible until drawer opens */
+  opacity:0;
   transition: background var(--dur), color var(--dur);
+}
+/* play enter animation once drawer is open */
+.mob-overlay.open .mob-item{
+  animation: mobItemIn .32s var(--spring) calc(var(--i)*.06s + .12s) both;
+}
+/* no-anim: skip animation, show immediately */
+.no-anim .mob-overlay.open .mob-item{
+  animation: none;
+  opacity:1;transform:translateX(0);
 }
 .mob-item:hover{background:var(--ac0);color:var(--tx)}
 .mob-num{
