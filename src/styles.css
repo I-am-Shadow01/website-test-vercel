@@ -546,17 +546,9 @@ nav.scrolled{
   display:flex;align-items:center;gap:12px;width:100%;
   padding:13px 14px;border-radius:var(--r);
   color:var(--tx2);background:transparent;
+  opacity:1 !important;
+  transform:none !important;
   transition: background var(--dur), color var(--dur);
-}
-/* show all items when overlay opens (fallback) */
-.mob-overlay.open .mob-item{
-  opacity:1;
-  transform:translateX(0);
-}
-/* no-anim: show immediately */
-.no-anim .mob-overlay.open .mob-item{
-  transition:none;
-  opacity:1;transform:translateX(0);
 }
 .mob-item:hover{background:var(--ac0);color:var(--tx)}
 .mob-num{
