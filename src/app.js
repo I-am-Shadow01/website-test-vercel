@@ -51,10 +51,10 @@ function createNav(t) {
     burger.setAttribute('aria-expanded','true');
     overlay = buildOverlay(items, t, closeMobile);
     document.body.appendChild(overlay);
-    // rAF ให้ browser paint initial state ก่อน แล้วค่อย add .open
     requestAnimationFrame(() => {
       requestAnimationFrame(() => {
         overlay.classList.add('open');
+        overlay.__startSync();
       });
     });
     document.body.style.overflow = 'hidden';
@@ -65,6 +65,7 @@ function createNav(t) {
     burger.setAttribute('aria-expanded','false');
     document.body.style.overflow = '';
     if (!overlay) return;
+    overlay.__stopSync();
     overlay.classList.remove('open');
     const el = overlay; overlay = null;
     el.addEventListener('transitionend', ()=>el.remove(), { once:true });
@@ -111,7 +112,7 @@ function buildOverlay(items, t, onClose) {
   ov.innerHTML = `
     <div class="mob-glass">
 
-      <!-- Header -->
+      <!-- Section 1: Name + Close -->
       <div class="mob-header">
         <span class="mob-header-logo">${CONFIG.meta.firstName}<span>.</span></span>
         <button class="mob-close" aria-label="Close menu">
@@ -121,7 +122,7 @@ function buildOverlay(items, t, onClose) {
         </button>
       </div>
 
-      <!-- Nav links -->
+      <!-- Section 2: Nav links -->
       <nav class="mob-nav">
         ${items.map((item,i)=>`
           <button class="mob-item" style="--i:${i}"
@@ -136,17 +137,43 @@ function buildOverlay(items, t, onClose) {
           </button>`).join('')}
       </nav>
 
-      <!-- Footer -->
+      <!-- Section 3: Location + Year -->
       <div class="mob-footer">
         <span>${CONFIG.meta.location}</span>
         <span>${new Date().getFullYear()}</span>
       </div>
     </div>
   `;
+
   ov.__close = onClose;
-  // Close on backdrop click (outside the drawer panel)
+
+  // Dynamic backdrop: clip overlay height to match panel height
+  const syncBackdropHeight = () => {
+    const glass = ov.querySelector('.mob-glass');
+    if (glass) {
+      const h = glass.getBoundingClientRect().height;
+      ov.style.height = h + 'px';
+    }
+  };
+
+  // Observe panel size changes
+  let ro = null;
+  ov.__startSync = () => {
+    const glass = ov.querySelector('.mob-glass');
+    if (!glass) return;
+    syncBackdropHeight();
+    if (window.ResizeObserver) {
+      ro = new ResizeObserver(syncBackdropHeight);
+      ro.observe(glass);
+    }
+  };
+  ov.__stopSync = () => {
+    if (ro) { ro.disconnect(); ro = null; }
+    ov.style.height = '';
+  };
+
+  // Close on backdrop click
   ov.addEventListener('click', e => { if (e.target === ov) onClose(); });
-  // Wire close button
   ov.querySelector('.mob-close').addEventListener('click', onClose);
   return ov;
 }

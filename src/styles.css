@@ -480,11 +480,12 @@ nav.scrolled{
 
 /* ── Glass panel — top-right corner, height fits content ── */
 .mob-glass{
-  position:absolute;
+  position:fixed;
   top:0; right:0;
   width:min(300px,90vw);
   display:flex;
   flex-direction:column;
+  z-index:999;
   background:rgba(8,8,20,.92);
   backdrop-filter:var(--blurXL);-webkit-backdrop-filter:var(--blurXL);
   border-left:1px solid var(--b1);
