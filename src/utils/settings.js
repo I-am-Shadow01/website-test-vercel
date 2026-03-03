@@ -84,14 +84,29 @@ export function applySettings(s) {
   const lang = s.lang === 'system' ? systemLang : s.lang;
   html.lang = lang;
 
-  // Accent color
-  html.style.setProperty('--accent', s.accent);
+  // ── Accent color ──────────────────────────────────────────
+  // Set --ac and all derived variants so dynamic accent works everywhere
+  html.style.setProperty('--ac',  s.accent);
+  html.style.setProperty('--ac0', hexToRgba(s.accent, 0.09));
+  html.style.setProperty('--ac1', hexToRgba(s.accent, 0.18));
+  html.style.setProperty('--acg', hexToRgba(s.accent, 0.32));
 
-  // Derive accent variants automatically from hex
-  const dim  = hexToRgba(s.accent, 0.09);
-  const glow = hexToRgba(s.accent, 0.22);
-  html.style.setProperty('--accent-dim',  dim);
-  html.style.setProperty('--accent-glow', glow);
+  // --ac-on: contrasting text color when accent is the background
+  // (used on btn-primary, toggle knob, copy-toast, arrow hover, etc.)
+  const lum = relativeLuminance(s.accent);
+  const acOn = lum > 0.30 ? '#0a0a0a' : '#f5f5f5';
+  html.style.setProperty('--ac-on', acOn);
+
+  // --ac-text: accent color safe to use AS text on the current theme
+  // On light themes, bright accents need to be darkened so they're readable
+  if (theme === 'light' && lum > 0.25) {
+    html.style.setProperty('--ac-text', darkenHex(s.accent, 0.52));
+  } else if (theme === 'dark' && lum < 0.04) {
+    // Very dark accent on dark bg → lighten
+    html.style.setProperty('--ac-text', lightenHex(s.accent, 0.55));
+  } else {
+    html.style.setProperty('--ac-text', s.accent);
+  }
 
   // Font size
   html.style.fontSize = FS_MAP[s.fontSize] || '16px';
@@ -103,11 +118,53 @@ export function applySettings(s) {
 // ─── Helpers ──────────────────────────────────────────────
 function hexToRgba(hex, alpha) {
   const h = hex.replace('#', '');
-  const len = h.length === 3 ? 1 : 2;
-  const r = parseInt(h.slice(0, len) + (len === 1 ? h[0] : ''), 16);
-  const g = parseInt(h.slice(len, len * 2) + (len === 1 ? h[len] : ''), 16);
-  const b = parseInt(h.slice(len * 2, len * 3) + (len === 1 ? h[len * 2] : ''), 16);
+  let r, g, b;
+  if (h.length === 3) {
+    r = parseInt(h[0] + h[0], 16);
+    g = parseInt(h[1] + h[1], 16);
+    b = parseInt(h[2] + h[2], 16);
+  } else {
+    r = parseInt(h.slice(0, 2), 16);
+    g = parseInt(h.slice(2, 4), 16);
+    b = parseInt(h.slice(4, 6), 16);
+  }
   return `rgba(${r},${g},${b},${alpha})`;
+}
+
+/** WCAG relative luminance (0 = black, 1 = white) */
+function relativeLuminance(hex) {
+  const h = hex.replace('#', '');
+  const parse = (s) => {
+    const v = parseInt(s, 16) / 255;
+    return v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4);
+  };
+  const len = h.length === 3 ? 1 : 2;
+  const r = parse(h.length === 3 ? h[0]+h[0] : h.slice(0, 2));
+  const g = parse(h.length === 3 ? h[1]+h[1] : h.slice(2, 4));
+  const b = parse(h.length === 3 ? h[2]+h[2] : h.slice(4, 6));
+  return 0.2126 * r + 0.7152 * g + 0.0722 * b;
+}
+
+/** Darken a hex color by a ratio (0–1) */
+function darkenHex(hex, ratio) {
+  const h = hex.replace('#', '');
+  const parse = (s) => parseInt(h.length === 3 ? s+s : s, 16);
+  const len = h.length === 3 ? 1 : 2;
+  const r = Math.max(0, Math.round(parse(h.slice(0,      len)) * (1 - ratio)));
+  const g = Math.max(0, Math.round(parse(h.slice(len,    len*2)) * (1 - ratio)));
+  const b = Math.max(0, Math.round(parse(h.slice(len*2,  len*3)) * (1 - ratio)));
+  return '#' + [r,g,b].map(v => v.toString(16).padStart(2,'0')).join('');
+}
+
+/** Lighten a hex color by blending toward white */
+function lightenHex(hex, ratio) {
+  const h = hex.replace('#', '');
+  const parse = (s) => parseInt(h.length === 3 ? s+s : s, 16);
+  const len = h.length === 3 ? 1 : 2;
+  const r = Math.min(255, Math.round(parse(h.slice(0,      len)) + (255 - parse(h.slice(0,      len))) * ratio));
+  const g = Math.min(255, Math.round(parse(h.slice(len,    len*2)) + (255 - parse(h.slice(len,    len*2))) * ratio));
+  const b = Math.min(255, Math.round(parse(h.slice(len*2,  len*3)) + (255 - parse(h.slice(len*2,  len*3))) * ratio));
+  return '#' + [r,g,b].map(v => v.toString(16).padStart(2,'0')).join('');
 }
 
 /** Listen to system theme changes and re-apply if mode is 'system' */
