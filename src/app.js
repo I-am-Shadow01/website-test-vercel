@@ -51,8 +51,12 @@ function createNav(t) {
     burger.setAttribute('aria-expanded','true');
     overlay = buildOverlay(items, t, closeMobile);
     document.body.appendChild(overlay);
-    overlay.offsetHeight;
-    overlay.classList.add('open');
+    // rAF ให้ browser paint initial state ก่อน แล้วค่อย add .open
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        overlay.classList.add('open');
+      });
+    });
     document.body.style.overflow = 'hidden';
   }
 

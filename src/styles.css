@@ -231,10 +231,10 @@ nav.scrolled{
 /* ── Mobile overlay ──────────────────────────────────────────── */
 .mob-overlay{
   position:fixed;inset:0;z-index:998;
-  background:rgba(0,0,0,.45);
-  backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);
-  opacity:0;pointer-events:none;
-  transition:opacity .32s var(--ease);
+  background:transparent;
+  backdrop-filter:blur(0px);-webkit-backdrop-filter:blur(0px);
+  pointer-events:none;
+  transition:background .32s var(--ease),backdrop-filter .32s var(--ease);
 }
 /* ══ LIGHT THEME COMPREHENSIVE FIXES ══════════════════════════ */
 
@@ -470,8 +470,13 @@ nav.scrolled{
 /* Sparkle trail in light mode */
 [data-theme=light] #__root__ { --sparkle-color: var(--ac-text); }
 
-[data-theme=light] .mob-overlay{background:rgba(0,0,0,.2)}
-.mob-overlay.open{opacity:1;pointer-events:all}
+[data-theme=light] .mob-overlay{background:transparent}
+.mob-overlay.open{
+  background:rgba(0,0,0,.45);
+  backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);
+  pointer-events:all;
+}
+[data-theme=light] .mob-overlay.open{background:rgba(0,0,0,.18)}
 
 /* Glass drawer — slides in from right */
 .mob-glass{
@@ -535,17 +540,28 @@ nav.scrolled{
   flex:1;padding:10px 10px;overflow-y:auto;
   display:flex;flex-direction:column;gap:2px;
 }
+/* keyframe for stagger-in — avoids paint-timing issue with transition */
+@keyframes mobItemIn {
+  from { opacity:0; transform:translateX(16px); }
+  to   { opacity:1; transform:translateX(0); }
+}
 .mob-item{
   display:flex;align-items:center;gap:12px;width:100%;
   padding:13px 14px;border-radius:var(--r);
   color:var(--tx2);background:transparent;
-  opacity:0;transform:translateX(18px);
-  transition:
-    opacity .26s var(--ease) calc(var(--i)*.055s + .06s),
-    transform .34s var(--spring) calc(var(--i)*.055s + .06s),
-    background var(--dur),color var(--dur);
+  /* invisible until drawer opens */
+  opacity:0;
+  transition: background var(--dur), color var(--dur);
 }
-.mob-overlay.open .mob-item{opacity:1;transform:translateX(0)}
+/* play enter animation once drawer is open */
+.mob-overlay.open .mob-item{
+  animation: mobItemIn .32s var(--spring) calc(var(--i)*.06s + .12s) both;
+}
+/* no-anim: skip animation, show immediately */
+.no-anim .mob-overlay.open .mob-item{
+  animation: none;
+  opacity:1;transform:translateX(0);
+}
 .mob-item:hover{background:var(--ac0);color:var(--tx)}
 .mob-num{
   font-size:.58rem;font-weight:500;
