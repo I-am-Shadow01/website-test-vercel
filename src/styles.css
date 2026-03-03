@@ -161,9 +161,12 @@ nav.scrolled {
   z-index: 999;
   flex-direction: column; align-items: center; justify-content: center; gap: 48px;
 }
-[data-theme="dark"]  .nav-mobile { background: rgba(9,9,9,0.97); backdrop-filter: blur(32px); }
-[data-theme="light"] .nav-mobile { background: rgba(247,247,245,0.97); backdrop-filter: blur(32px); }
+[data-theme="dark"]  .nav-mobile { background: #090909; }
+[data-theme="light"] .nav-mobile { background: #F7F7F5; }
 .nav-mobile.open { display: flex; }
+/* Hide hero decorations when mobile menu is open */
+.nav-mobile.open ~ * .hero-deco,
+body.menu-open .hero-deco { opacity: 0; transition: opacity 0.2s; }
 .nav-mobile a {
   font-size: 2.4rem; font-weight: 300; color: var(--text-sub); letter-spacing: -0.03em;
   transition: color var(--dur), transform var(--dur) var(--ease-bounce);
@@ -667,3 +670,205 @@ footer {
   *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
   .reveal { opacity: 1 !important; transform: none !important; }
 }
+
+/* ═══════════════════════════════════════════════════════════
+ * NAV BUTTONS (replace anchor tags)
+ * ═══════════════════════════════════════════════════════════ */
+.nav-logo {
+  font-size: 1.05rem; font-weight: 700; letter-spacing: -0.02em;
+  color: var(--text); background: none; border: none;
+  transition: color var(--dur); flex-shrink: 0;
+  padding: 0;
+}
+.nav-logo span { color: var(--accent); }
+.nav-logo:hover { color: var(--accent); }
+
+.nav-link {
+  font-size: 0.855rem; font-weight: 300; color: var(--text-muted);
+  letter-spacing: 0.025em; transition: color var(--dur);
+  position: relative; padding-bottom: 2px;
+  background: none; border: none; padding: 0;
+}
+.nav-link::after {
+  content: ''; position: absolute; bottom: -2px; left: 0;
+  width: 0; height: 1px; background: var(--accent);
+  transition: width var(--dur) var(--ease);
+}
+.nav-link:hover,
+.nav-link.active { color: var(--text); }
+.nav-link.active::after,
+.nav-link:hover::after { width: 100%; }
+
+/* ═══════════════════════════════════════════════════════════
+ * LIQUID GLASS MOBILE OVERLAY
+ * ═══════════════════════════════════════════════════════════ */
+.mobile-overlay {
+  position: fixed; inset: 0;
+  z-index: 998;
+  display: flex; align-items: flex-end;
+  padding: calc(var(--nav-h) + 16px) 16px 16px;
+
+  /* Blurred backdrop */
+  background: rgba(0, 0, 0, 0.25);
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
+
+  opacity: 0;
+  transition: opacity 0.35s var(--ease);
+}
+[data-theme="light"] .mobile-overlay {
+  background: rgba(0, 0, 0, 0.12);
+}
+.mobile-overlay.open { opacity: 1; }
+
+/* The glass card */
+.mobile-overlay-glass {
+  width: 100%;
+  border-radius: 24px;
+  overflow: hidden;
+  position: relative;
+
+  /* Glassmorphism */
+  background: rgba(15, 15, 15, 0.72);
+  backdrop-filter: blur(40px) saturate(1.8) brightness(1.1);
+  -webkit-backdrop-filter: blur(40px) saturate(1.8) brightness(1.1);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow:
+    0 0 0 0.5px rgba(255,255,255,0.06) inset,
+    0 40px 80px rgba(0,0,0,0.6),
+    0 0 60px rgba(198,241,53,0.04);
+
+  transform: translateY(40px) scale(0.97);
+  transition: transform 0.45s var(--ease-bounce), opacity 0.35s var(--ease);
+  opacity: 0;
+}
+[data-theme="light"] .mobile-overlay-glass {
+  background: rgba(255, 255, 255, 0.62);
+  border: 1px solid rgba(255,255,255,0.7);
+  box-shadow:
+    0 0 0 0.5px rgba(255,255,255,0.8) inset,
+    0 40px 80px rgba(0,0,0,0.18),
+    0 0 60px rgba(198,241,53,0.06);
+}
+.mobile-overlay.open .mobile-overlay-glass {
+  transform: translateY(0) scale(1);
+  opacity: 1;
+  transition-delay: 0.05s;
+}
+
+/* Sheen line at top of glass */
+.mobile-overlay-glass::before {
+  content: '';
+  position: absolute; top: 0; left: 8%; right: 8%; height: 1px;
+  background: linear-gradient(to right,
+    transparent,
+    rgba(255,255,255,0.35) 30%,
+    rgba(255,255,255,0.5) 50%,
+    rgba(255,255,255,0.35) 70%,
+    transparent
+  );
+  pointer-events: none;
+}
+
+/* Accent glow blob inside glass */
+.mobile-overlay-glass::after {
+  content: '';
+  position: absolute; top: -60px; right: -40px;
+  width: 200px; height: 200px; border-radius: 50%;
+  background: radial-gradient(circle, rgba(198,241,53,0.12), transparent 65%);
+  pointer-events: none;
+}
+
+/* Nav items inside glass */
+.mobile-nav-inner { padding: 12px 8px; }
+
+.mobile-nav-item {
+  display: flex; align-items: center; gap: 0;
+  width: 100%; padding: 20px 20px;
+  background: transparent; border: none;
+  color: var(--text);
+  position: relative; overflow: hidden;
+  transition: background var(--dur);
+  border-radius: 16px;
+
+  /* Stagger in animation */
+  opacity: 0;
+  transform: translateY(12px);
+  transition: opacity 0.3s var(--ease), transform 0.35s var(--ease-bounce),
+              background var(--dur);
+  transition-delay: calc(var(--i) * 0.06s + 0.12s);
+}
+.mobile-overlay.open .mobile-nav-item {
+  opacity: 1; transform: translateY(0);
+}
+.mobile-nav-item:hover {
+  background: rgba(198,241,53,0.06);
+}
+[data-theme="light"] .mobile-nav-item:hover {
+  background: rgba(0,0,0,0.04);
+}
+
+/* Item separator line */
+.mobile-nav-item + .mobile-nav-item::before {
+  content: '';
+  position: absolute; top: 0; left: 20px; right: 20px; height: 1px;
+  background: rgba(255,255,255,0.05);
+}
+[data-theme="light"] .mobile-nav-item + .mobile-nav-item::before {
+  background: rgba(0,0,0,0.06);
+}
+
+.mni-num {
+  font-size: 0.65rem; font-weight: 500; color: var(--accent);
+  letter-spacing: 0.12em; margin-right: 16px;
+  opacity: 0.75; flex-shrink: 0;
+  font-family: 'Courier New', monospace;
+}
+
+.mni-label {
+  font-size: 1.8rem; font-weight: 300;
+  letter-spacing: -0.03em;
+  color: var(--text); flex: 1; text-align: left;
+  line-height: 1;
+}
+
+.mni-arrow {
+  width: 38px; height: 38px; border-radius: 50%;
+  border: 1px solid rgba(255,255,255,0.1);
+  display: flex; align-items: center; justify-content: center;
+  color: var(--text-muted); flex-shrink: 0;
+  transform: rotate(0deg);
+  transition: border-color var(--dur), color var(--dur),
+              transform var(--dur) var(--ease-bounce), background var(--dur);
+}
+[data-theme="light"] .mni-arrow { border-color: rgba(0,0,0,0.1); }
+.mobile-nav-item:hover .mni-arrow {
+  border-color: var(--accent); color: var(--bg);
+  background: var(--accent); transform: rotate(-45deg);
+}
+
+/* Footer strip inside glass */
+.mobile-overlay-footer {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 28px 22px;
+  border-top: 1px solid rgba(255,255,255,0.06);
+  opacity: 0; transform: translateY(6px);
+  transition: opacity 0.3s var(--ease) 0.38s, transform 0.3s var(--ease) 0.38s;
+}
+[data-theme="light"] .mobile-overlay-footer { border-top-color: rgba(0,0,0,0.06); }
+.mobile-overlay.open .mobile-overlay-footer { opacity: 1; transform: none; }
+
+.mof-location {
+  display: flex; align-items: center; gap: 5px;
+  font-size: 0.7rem; color: var(--text-muted); letter-spacing: 0.06em;
+}
+.mof-year { font-size: 0.7rem; color: var(--text-muted); opacity: 0.5; }
+
+/* ─── Also style footer button ───────────────────────────────*/
+.footer-top {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 0.78rem; color: var(--text-muted);
+  background: none; border: none; padding: 0;
+  transition: color var(--dur), transform var(--dur) var(--ease-bounce);
+}
+.footer-top:hover { color: var(--text); transform: translateY(-2px); }

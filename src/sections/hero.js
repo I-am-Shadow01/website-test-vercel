@@ -42,13 +42,13 @@ export function renderHero({ meta, about }, t) {
       ` : ''}
 
       <div class="hero-cta reveal d4">
-        <a href="#projects" class="btn btn-primary">
+        <button data-section="projects" class="btn btn-primary">
           ${t('cta_projects')}
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
             <line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>
           </svg>
-        </a>
-        <a href="#contact" class="btn btn-secondary">${t('cta_contact')}</a>
+        </button>
+        <button data-section="contact" class="btn btn-secondary">${t('cta_contact')}</button>
       </div>
 
       <!-- Quick stats row -->

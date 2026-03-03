@@ -1,38 +1,39 @@
 /**
  * utils/smoothscroll.js
- * Intercept all internal anchor clicks → smooth scroll WITHOUT changing the URL hash
+ * Navigation via data-section attributes — NO href="#..." anywhere
+ * Zero hash pollution in URL
  */
 
-export function initSmoothScroll() {
-  const NAV_H = 64; // matches --nav-h
+const NAV_H = 64;
 
-  // If page loaded with a hash, strip it silently
+export function scrollTo(sectionId) {
+  const target = document.getElementById(sectionId);
+  if (!target) return;
+  const top = target.getBoundingClientRect().top + window.scrollY - NAV_H;
+  window.scrollTo({ top, behavior: 'smooth' });
+}
+
+export function initSmoothScroll() {
+  // Strip any residual hash from URL immediately
   if (location.hash) {
-    const id = location.hash.slice(1);
     history.replaceState(null, '', location.pathname + location.search);
-    // Still scroll to the section if it exists
-    const target = document.getElementById(id);
-    if (target) {
-      setTimeout(() => {
-        const top = target.getBoundingClientRect().top + window.scrollY - NAV_H;
-        window.scrollTo({ top, behavior: 'smooth' });
-      }, 300);
-    }
   }
 
+  // Handle [data-section] clicks anywhere in the document
   document.addEventListener('click', (e) => {
-    const anchor = e.target.closest('a[href^="#"]');
-    if (!anchor) return;
-
-    const id = anchor.getAttribute('href').slice(1);
-    if (!id) return;
-
-    const target = document.getElementById(id);
-    if (!target) return;
-
+    const el = e.target.closest('[data-section]');
+    if (!el) return;
     e.preventDefault();
-    // Never push hash to URL
-    const top = target.getBoundingClientRect().top + window.scrollY - NAV_H;
-    window.scrollTo({ top, behavior: 'smooth' });
+    const id = el.dataset.section;
+    scrollTo(id);
+  });
+
+  // Also guard remaining href="#..." (safety net)
+  document.addEventListener('click', (e) => {
+    const a = e.target.closest('a[href^="#"]');
+    if (!a) return;
+    e.preventDefault();
+    const id = a.getAttribute('href').slice(1);
+    if (id) scrollTo(id);
   });
 }
