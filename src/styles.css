@@ -56,8 +56,6 @@
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 html {
-  scroll-behavior: smooth;
-  scroll-padding-top: var(--nav-h);
   font-size: 16px;
   -webkit-text-size-adjust: 100%;
 }
@@ -231,13 +229,20 @@ nav.scrolled {
   position: fixed;
   inset: 0;
   top: var(--nav-h);
-  background: rgba(9,9,9,0.97);
-  backdrop-filter: blur(24px);
+  background: var(--bg);
+  backdrop-filter: blur(32px) saturate(1.8);
+  -webkit-backdrop-filter: blur(32px) saturate(1.8);
   z-index: 999;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   gap: 48px;
+}
+[data-theme="dark"] .nav-mobile {
+  background: rgba(9,9,9,0.96);
+}
+[data-theme="light"] .nav-mobile {
+  background: rgba(249,249,247,0.97);
 }
 .nav-mobile.open { display: flex; }
 .nav-mobile a {

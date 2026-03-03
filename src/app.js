@@ -11,6 +11,7 @@ import { renderContact }                 from './sections/contact.js';
 import { initCursor }                    from './utils/cursor.js';
 import { initAnimations }                from './utils/animations.js';
 import { initBackground }                from './utils/background.js';
+import { initSmoothScroll }              from './utils/smoothscroll.js';
 import { loadSettings, applySettings,
          watchSystemTheme, getSettings } from './utils/settings.js';
 import { createSettingsPanel }           from './components/settings-panel.js';
@@ -72,13 +73,14 @@ function createNav(t) {
 }
 
 function updateActiveLink(nav) {
-  const scrollY = window.scrollY + 120;
+  const scrollY = window.scrollY + 140;
   let activeId  = 'hero';
   document.querySelectorAll('section[id]').forEach(s => {
     if (s.offsetTop <= scrollY) activeId = s.id;
   });
   nav.querySelectorAll('a[href^="#"]').forEach(a => {
-    a.classList.toggle('active', a.getAttribute('href') === `#${activeId}`);
+    const id = a.getAttribute('href').replace('#', '');
+    a.classList.toggle('active', id === activeId);
   });
 }
 
@@ -197,6 +199,7 @@ async function render() {
     _initialized = true;
     initAnimations();
     initProjectSpotlight();
+    initSmoothScroll();
   } else {
     rerenderText(root, t);
   }
